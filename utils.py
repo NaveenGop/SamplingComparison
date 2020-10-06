@@ -2,6 +2,9 @@ import scipy.stats as stats
 import math
 import matplotlib.pyplot as plt
 
+import numpy as np
+from scipy import integrate
+
 #######################################
 ###   PDFs of three distributions   ###
 #######################################
@@ -18,6 +21,15 @@ def gauss_mix(p,mu1,sig1,mu2,sig2):
     """
 
     return lambda x: p*stats.norm.pdf(x,loc = mu1, scale = sig1) + (1-p)*stats.norm.pdf(x, loc = mu2, scale = sig2)
+
+def total_variation_distance(samples1, samples2, dt):
+    """ Romberg integration using samples of the density functions.
+    Ensure that exactly 2 ** k + 1 evenly spaced samples are created."""
+    assert samples1.shape == samples2.shape, 'different sample lengths'
+    result = 0.5 * integrate.romb(np.abs(samples1 - samples2), dt)
+    while type(result) == np.ndarray:
+        result = integrate.romb(result, dt)
+    return result
 
 #######################################
 ###   Plotting and Graping Utils    ###
